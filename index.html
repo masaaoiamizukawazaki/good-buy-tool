@@ -10,36 +10,33 @@
 <link rel="icon" type="image/png" sizes="180x180" href="apple-touch-icon-180.png">
 
 <style>
-/* 画面中央寄せ */
-html, body{
-  height:100%;
-}
+/* 基本：スマホでは普通に上から表示 */
 body{
   margin:0;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   padding:16px;
   box-sizing:border-box;
   background:#fafafa;
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
 }
 
-/* カードUI（淡ベージュ系・センタリング） */
+/* カードUI（淡ベージュ系） */
 .buy-card{
   --bg:#fffdf8; --fg:#1f2937; --muted:#6b7280; --border:#eadfd2; --chip:#faf5ee;
   --accent:#111827; --accent-2:#d97706; --accent-3:#10b981; --warn:#ef4444; --hold:#f59e0b;
   --shadow:0 10px 24px rgba(0,0,0,.06); --radius:14px; --ring:0 0 0 3px rgba(217,119,6,.25);
-  font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+
   max-width:720px;
   width:100%;
-  margin:0;
-  background:var(--bg); color:var(--fg);
-  border:1px solid var(--border); border-radius:var(--radius);
-  padding:20px; box-shadow:var(--shadow);
+  margin:0 auto;               /* スマホは上から・横だけ中央 */
+  background:var(--bg);
+  color:var(--fg);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:var(--shadow);
 }
 
-/* ▼ タイトル背景（追加） */
+/* タイトル背景つき */
 .buy-card h3{
   margin:0 0 14px;
   font-size:20px; font-weight:700; letter-spacing:.2px;
@@ -47,7 +44,6 @@ body{
   padding:8px 14px;
   border-radius:10px;
 }
-
 .buy-card p.lead{ margin:0 0 14px; font-size:14px; color:var(--muted); }
 .buy-card label{ font-size:14px; display:block; }
 .buy-card input[type="text"], .buy-card select, .buy-card input[type="range"]{
@@ -55,6 +51,8 @@ body{
   border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-top:6px;
   transition:border-color .2s, box-shadow .2s, background .2s;
 }
+
+/* ダークテーマ */
 @media (prefers-color-scheme: dark){
   .buy-card{
     --bg:#0f1113; --fg:#e5e7eb; --muted:#a3a3a3; --border:#1f2937; --chip:#15181b;
@@ -100,7 +98,7 @@ body{
 .history-list{ padding:10px 12px; font-size:14px; white-space:pre-wrap; }
 .muted{ color:var(--muted); font-size:12px; margin-top:10px; }
 
-/* ダークテーマでの視認性改善 */
+/* ダークテーマでのスライダー＆ボタン */
 @media (prefers-color-scheme: dark){
   input[type="range"]{ background:transparent; }
   input[type="range"]::-webkit-slider-runnable-track{
@@ -121,6 +119,20 @@ body{
   }
   .buy-card button.primary:hover{ filter:brightness(1.1); }
 }
+
+/* 768px 以上の画面ではカードを画面ど真ん中に */
+@media (min-width:768px){
+  html, body{ height:100%; }
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .buy-card{
+    margin:0;          /* PC・タブレットでは上下も中央寄せ */
+  }
+}
 </style>
 </head>
 <body>
@@ -140,7 +152,6 @@ body{
           <option value="0">いいえ（曖昧）</option>
         </select>
       </label>
-
       <label>想定使用頻度は？
         <select id="q2">
           <option value="3">毎日</option>
@@ -149,7 +160,6 @@ body{
           <option value="0">ほぼ使わない気がする</option>
         </select>
       </label>
-
       <label>代替・似たものは？
         <select id="q3">
           <option value="2">持っていない／代替がない</option>
@@ -157,7 +167,6 @@ body{
           <option value="0">持っていて用途が被る</option>
         </select>
       </label>
-
       <label>予算への影響は？
         <select id="q4">
           <option value="2">余裕がある</option>
@@ -165,7 +174,6 @@ body{
           <option value="0">無理がある</option>
         </select>
       </label>
-
       <label>返品・再販の容易さは？
         <select id="q5">
           <option value="2">容易（返品可／中古相場が安定）</option>
@@ -173,13 +181,11 @@ body{
           <option value="0">困難（不可／相場不明）</option>
         </select>
       </label>
-
       <label>衝動レベル（直感の熱さ）
         <input id="q6" type="range" min="0" max="10" value="5"
-         oninput="document.getElementById('q6v').textContent=this.value;">
+               oninput="document.getElementById('q6v').textContent=this.value;">
         <span id="q6v">5</span>/10
       </label>
-
       <label>調査は十分か？（比較・レビュー確認）
         <select id="q7">
           <option value="2">はい（十分に調べた）</option>
@@ -187,7 +193,6 @@ body{
           <option value="0">ほぼ調べていない</option>
         </select>
       </label>
-
       <label>使用タイミング（旬・期限の有無）
         <select id="q8">
           <option value="2">すぐ使う／旬を逃すと意味がない</option>
@@ -253,57 +258,8 @@ body{
 
   function rationalScore(){
     const v=id=>Number((root.querySelector('#'+id)||{value:0}).value);
-    const base = v('q1')+v('q2')+v('q3')+v('q4')+v('q5')+v('q7')+v('q8');
-    const maxBase = 15;
-    let score = Math.round((base / maxBase) * 100);
-
-    const penalty = Math.round(((root.querySelector('#q6')||{value:0}).value/10)*15);
-    score = Math.max(0, score - penalty);
-    return Math.min(100, score);
+    const base = v('q1')+v('q2')+v('3')+v('q4')+v('q5')+v('q7')+v('q8');
   }
-
-  function decideRational(){
-    const s=rationalScore();
-    let decision,note,badge='b-no';
-    if(s>=60){
-      decision='買う'; badge='b-buy';
-      note='用途・頻度・調査が揃い、勢いの減点を上回っています。';
-    }else if(s>=40){
-      decision='保留（24時間）'; badge='b-hold';
-      note='一晩置いても欲しければ再判定。価格・代替・レビュー再確認を。';
-      localStorage.setItem('buyDeciderCooldownUntil', String(Date.now()+24*60*60*1000));
-    }else{
-      decision='買わない'; badge='b-no';
-      note='用途/頻度/代替/調査のいずれかが弱い可能性。必要性を再定義。';
-    }
-    return {score:s, decision, note, badge};
-  }
-
-  let deciding=false;
-  btn.addEventListener('click',()=>{
-    if(deciding) return; deciding=true; setTimeout(()=>deciding=false,300);
-
-    const res=decideRational();
-    const item=(itemInput.value||'').trim()||'（未入力）';
-
-    result.style.display='block';
-    result.innerHTML =
-      `<span class="badge ${res.badge}">${res.decision}</span>`+
-      `${res.score!=null?`スコア：<strong>${res.score}</strong>｜`:''}`+
-      `${res.note||''}`+
-      `<br><span class="muted">対象：${item}</span>`;
-
-    saveHistory({ts:Date.now(), decision:res.decision, score:res.score, note:res.note, item:item});
-    renderHistory();
-  });
-
-  clearBtn.addEventListener('click',()=>{ localStorage.removeItem('buyDeciderHistory'); renderHistory(); });
-
-  itemInput.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){ e.preventDefault(); btn.click(); }
-  });
-
-  renderHistory();
 })();
 </script>
 </body>
