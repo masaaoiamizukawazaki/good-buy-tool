@@ -133,6 +133,20 @@ body{
     margin:0;          /* PC・タブレットでは上下も中央寄せ */
   }
 }
+
+/* 画面幅 640px 以下：左右 16px の余白を均等に */
+@media (max-width:640px){
+  body{
+    padding:0; /* 余白はボディではなくカードで取る */
+  }
+  .buy-card{
+    margin:16px;         /* ← 左右16pxずつの均等余白 */
+    max-width:none;      /* スマホでは固定幅より可変幅が自然 */
+    border-radius:12px;  /* 度合いはお好みで */
+    box-shadow:0 4px 14px rgba(0,0,0,.2);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -264,3 +278,4 @@ body{
 </script>
 </body>
 </html>
+
