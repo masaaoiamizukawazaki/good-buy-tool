@@ -10,13 +10,17 @@
 <link rel="icon" type="image/png" sizes="180x180" href="apple-touch-icon-180.png">
 
 <style>
-/* 基本：スマホでは普通に上から表示 */
+/* ベース */
 body{
   margin:0;
-  padding:16px;
-  box-sizing:border-box;
   background:#fafafa;
   font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+}
+
+/* 余白とセンタリングを担当するラッパー */
+.page{
+  box-sizing:border-box;
+  padding:16px;          /* ← 左右16pxの均等余白 */
 }
 
 /* カードUI（淡ベージュ系） */
@@ -27,7 +31,7 @@ body{
 
   max-width:720px;
   width:100%;
-  margin:0 auto;               /* スマホは上から・横だけ中央 */
+  margin:0 auto;              /* ラッパー内で中央寄せ */
   background:var(--bg);
   color:var(--fg);
   border:1px solid var(--border);
@@ -54,6 +58,7 @@ body{
 
 /* ダークテーマ */
 @media (prefers-color-scheme: dark){
+  body{ background:#020617; }
   .buy-card{
     --bg:#0f1113; --fg:#e5e7eb; --muted:#a3a3a3; --border:#1f2937; --chip:#15181b;
     --accent:#e5e7eb; --ring:0 0 0 3px rgba(217,119,6,.35); --shadow:0 10px 24px rgba(0,0,0,.35);
@@ -129,116 +134,106 @@ body{
     align-items:center;
     justify-content:center;
   }
-  .buy-card{
-    margin:0;          /* PC・タブレットでは上下も中央寄せ */
+  .page{
+    width:100%;
+    max-width:720px;
+    padding:24px;
   }
 }
-
-/* 画面幅 640px 以下：左右 16px の余白を均等に */
-@media (max-width:640px){
-  body{
-    padding:0; /* 余白はボディではなくカードで取る */
-  }
-  .buy-card{
-    margin:16px;         /* ← 左右16pxずつの均等余白 */
-    max-width:none;      /* スマホでは固定幅より可変幅が自然 */
-    border-radius:12px;  /* 度合いはお好みで */
-    box-shadow:0 4px 14px rgba(0,0,0,.2);
-  }
-}
-
 </style>
 </head>
 <body>
-<div id="buy-decider" class="buy-card" aria-describedby="desc-decider">
-  <h3>買うか買わないか判定ツール</h3>
-  <p id="desc-decider" class="lead">短いアンケートに答えると、買う/保留/買わないを提案します。</p>
+<div class="page">
+  <div id="buy-decider" class="buy-card" aria-describedby="desc-decider">
+    <h3>買うか買わないか判定ツール</h3>
+    <p id="desc-decider" class="lead">短いアンケートに答えると、買う/保留/買わないを提案します。</p>
 
-  <label style="margin:8px 0 12px;">欲ちぃ物：
-    <input id="itemName" type="text" placeholder="例：ひねり揚げ / ギニア製ドゥンドゥン用スティック" />
-  </label>
+    <label style="margin:8px 0 12px;">欲ちぃ物：
+      <input id="itemName" type="text" placeholder="例：ひねり揚げ / ギニア製ドゥンドゥン用スティック" />
+    </label>
 
-  <div id="rational-form" style="border-top:1px dashed #eadfd2; padding-top:12px; margin-top:8px;">
-    <div class="grid">
-      <label>用途は一文で説明できるか？
-        <select id="q1">
-          <option value="2">はい（明確）</option>
-          <option value="0">いいえ（曖昧）</option>
-        </select>
-      </label>
-      <label>想定使用頻度は？
-        <select id="q2">
-          <option value="3">毎日</option>
-          <option value="2">週に数回</option>
-          <option value="1">月に数回</option>
-          <option value="0">ほぼ使わない気がする</option>
-        </select>
-      </label>
-      <label>代替・似たものは？
-        <select id="q3">
-          <option value="2">持っていない／代替がない</option>
-          <option value="1">持っているが用途が違う</option>
-          <option value="0">持っていて用途が被る</option>
-        </select>
-      </label>
-      <label>予算への影響は？
-        <select id="q4">
-          <option value="2">余裕がある</option>
-          <option value="1">少し厳しい</option>
-          <option value="0">無理がある</option>
-        </select>
-      </label>
-      <label>返品・再販の容易さは？
-        <select id="q5">
-          <option value="2">容易（返品可／中古相場が安定）</option>
-          <option value="1">普通</option>
-          <option value="0">困難（不可／相場不明）</option>
-        </select>
-      </label>
-      <label>衝動レベル（直感の熱さ）
-        <input id="q6" type="range" min="0" max="10" value="5"
-               oninput="document.getElementById('q6v').textContent=this.value;">
-        <span id="q6v">5</span>/10
-      </label>
-      <label>調査は十分か？（比較・レビュー確認）
-        <select id="q7">
-          <option value="2">はい（十分に調べた）</option>
-          <option value="1">ある程度調べた</option>
-          <option value="0">ほぼ調べていない</option>
-        </select>
-      </label>
-      <label>使用タイミング（旬・期限の有無）
-        <select id="q8">
-          <option value="2">すぐ使う／旬を逃すと意味がない</option>
-          <option value="1">そのうち使う</option>
-          <option value="0">急がない</option>
-        </select>
-      </label>
+    <div id="rational-form" style="border-top:1px dashed #eadfd2; padding-top:12px; margin-top:8px;">
+      <div class="grid">
+        <label>用途は一文で説明できるか？
+          <select id="q1">
+            <option value="2">はい（明確）</option>
+            <option value="0">いいえ（曖昧）</option>
+          </select>
+        </label>
+        <label>想定使用頻度は？
+          <select id="q2">
+            <option value="3">毎日</option>
+            <option value="2">週に数回</option>
+            <option value="1">月に数回</option>
+            <option value="0">ほぼ使わない気がする</option>
+          </select>
+        </label>
+        <label>代替・似たものは？
+          <select id="q3">
+            <option value="2">持っていない／代替がない</option>
+            <option value="1">持っているが用途が違う</option>
+            <option value="0">持っていて用途が被る</option>
+          </select>
+        </label>
+        <label>予算への影響は？
+          <select id="q4">
+            <option value="2">余裕がある</option>
+            <option value="1">少し厳しい</option>
+            <option value="0">無理がある</option>
+          </select>
+        </label>
+        <label>返品・再販の容易さは？
+          <select id="q5">
+            <option value="2">容易（返品可／中古相場が安定）</option>
+            <option value="1">普通</option>
+            <option value="0">困難（不可／相場不明）</option>
+          </select>
+        </label>
+        <label>衝動レベル（直感の熱さ）
+          <input id="q6" type="range" min="0" max="10" value="5"
+                 oninput="document.getElementById('q6v').textContent=this.value;">
+          <span id="q6v">5</span>/10
+        </label>
+        <label>調査は十分か？（比較・レビュー確認）
+          <select id="q7">
+            <option value="2">はい（十分に調べた）</option>
+            <option value="1">ある程度調べた</option>
+            <option value="0">ほぼ調べていない</option>
+          </select>
+        </label>
+        <label>使用タイミング（旬・期限の有無）
+          <select id="q8">
+            <option value="2">すぐ使う／旬を逃すと意味がない</option>
+            <option value="1">そのうち使う</option>
+            <option value="0">急がない</option>
+          </select>
+        </label>
+      </div>
     </div>
-  </div>
 
-  <div class="actions">
-    <button id="decideBtn" class="primary">判定する</button>
-  </div>
-
-  <div id="result" role="status" aria-live="polite"></div>
-
-  <details class="history">
-    <summary>過去の判定（この端末のみ）</summary>
-    <div id="history" class="history-list"></div>
-    <div style="padding:0 12px 12px;">
-      <button id="clearHistory" class="ghost" type="button">履歴を消す</button>
+    <div class="actions">
+      <button id="decideBtn" class="primary">判定する</button>
     </div>
-  </details>
 
-  <p class="muted">
-    ※助言用のおもちゃです。最終決定はご自身でお願いいたします。<br>
-    ※スコア60点以上で「買う」、40〜59点は「保留（24時間後に再判定）」、39点以下は「買わない」を提案します。
-  </p>
-  <p class="muted">
-    【履歴保存について】この機能の判定履歴は、
-    <strong>ご利用中の端末とブラウザ内（localStorage）</strong>にのみ保存されます。
-  </p>
+    <div id="result" role="status" aria-live="polite"></div>
+
+    <details class="history">
+      <summary>過去の判定（この端末のみ）</summary>
+      <div id="history" class="history-list"></div>
+      <div style="padding:0 12px 12px;">
+        <button id="clearHistory" class="ghost" type="button">履歴を消す</button>
+      </div>
+    </details>
+
+    <p class="muted">
+      ※助言用のおもちゃです。最終決定はご自身でお願いいたします。<br>
+      ※スコア60点以上で「買う」、40〜59点は「保留（24時間後に再判定）」、39点以下は「買わない」を提案します。
+    </p>
+    <p class="muted">
+      【履歴保存について】この機能の判定履歴は、
+      <strong>ご利用中の端末とブラウザ内（localStorage）</strong>にのみ保存されます。
+    </p>
+  </div>
 </div>
 
 <script>
@@ -272,10 +267,57 @@ body{
 
   function rationalScore(){
     const v=id=>Number((root.querySelector('#'+id)||{value:0}).value);
-    const base = v('q1')+v('q2')+v('3')+v('q4')+v('q5')+v('q7')+v('q8');
+    // 最大15点（q1..q5 + q7 + q8）
+    const base = v('q1')+v('q2')+v('q3')+v('q4')+v('q5')+v('q7')+v('q8');
+    const maxBase = 15;
+    let score = Math.round((base / maxBase) * 100);
+    const penalty = Math.round(((root.querySelector('#q6')||{value:0}).value/10)*15);
+    score = Math.max(0, score - penalty);
+    return Math.min(100, score);
   }
+
+  function decideRational(){
+    const s=rationalScore();
+    let decision,note,badge='b-no';
+    if(s>=60){
+      decision='買う'; badge='b-buy';
+      note='用途・頻度・調査が揃い、勢いの減点を上回っています。';
+    }else if(s>=40){
+      decision='保留（24時間）'; badge='b-hold';
+      note='一晩置いても欲しければ再判定。価格・代替・レビュー再確認を。';
+      localStorage.setItem('buyDeciderCooldownUntil', String(Date.now()+24*60*60*1000));
+    }else{
+      decision='買わない'; badge='b-no';
+      note='用途/頻度/代替/調査のいずれかが弱い可能性。必要性を再定義。';
+    }
+    return {score:s, decision, note, badge};
+  }
+
+  let deciding=false;
+  btn.addEventListener('click',()=>{
+    if(deciding) return; deciding=true; setTimeout(()=>deciding=false,300);
+
+    const res=decideRational();
+    const item=(itemInput.value||'').trim()||'（未入力）';
+
+    result.style.display='block';
+    result.innerHTML =
+      `<span class="badge ${res.badge}">${res.decision}</span>`+
+      `${res.score!=null?`スコア：<strong>${res.score}</strong>｜`:''}`+
+      `${res.note||''}`+
+      `<br><span class="muted">対象：${item}</span>`;
+
+    saveHistory({ts:Date.now(), decision:res.decision, score:res.score, note:res.note, item:item});
+    renderHistory();
+  });
+
+  clearBtn.addEventListener('click',()=>{ localStorage.removeItem('buyDeciderHistory'); renderHistory(); });
+
+  itemInput.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){ e.preventDefault(); btn.click(); });
+
+  renderHistory();
 })();
 </script>
 </body>
 </html>
-
